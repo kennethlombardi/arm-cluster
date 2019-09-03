@@ -39,7 +39,7 @@ exit
 
 ``` bash
 # delete user and home directory:
-userdel -r <user>
+userdel -r rock64
 ```
 
 # Set up the user environment
