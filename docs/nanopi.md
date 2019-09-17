@@ -58,13 +58,17 @@ In order to add this node to a swarm it will need to have docker installed.
 Test the version of docker using `docker info`. The response should be
 ```
 Command 'docker' not found, but can be installed with:
-
-sudo apt install docker.io
 ```
 
 ```bash
 # install docker
+sudo apt update # update first
+
 sudo apt install docker.io -y
+
+# perform docker post install steps
+https://docs.docker.com/install/linux/linux-postinstall/
+Be aware: `https://docs.docker.com/engine/security/security/#docker-daemon-attack-surface`
 
 # add user to docker group so sudo isn't necessary
 sudo usermod -aG docker your-user
@@ -88,4 +92,17 @@ lsb_release -a
 
 #
 ```
+
+If you re flash the devices and your old keys stick around there may be need to reissue the private/public key pairs
+
+You may also need to update your ssh config file to only use identities defined in the config and not try every key against your servers. Be specific.
+
+https://www.tecmint.com/fix-ssh-too-many-authentication-failures-error/
+
+Remove offensive entry from known_hosts
+ssh-keygen -R nanopineo-1.tribal.net
+
+Log in and bypass existing keys
+ssh -o PubkeyAuthentication=no -vvv root@nanopineo-1.tribal.net
+
 

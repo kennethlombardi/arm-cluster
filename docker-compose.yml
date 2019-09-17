@@ -22,6 +22,7 @@ services:
     deploy:
       placement:
         constraints: [node.role == manager]
+
   redis:
     image: redis
     ports:
@@ -33,4 +34,3 @@ services:
         constraints:
           - node.role == manager
     command: redis-server --appendonly yes
-

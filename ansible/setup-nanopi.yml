@@ -1,0 +1,8 @@
+---
+- hosts: all
+  remote_user: tribal
+  become: yes
+  tasks:
+    - name: test connection
+      ping:
+      remote_user: tribal
