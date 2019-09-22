@@ -1,0 +1,9 @@
+---
+- hosts: all
+  remote_user: tribal
+  tasks:
+    - name: Create hello world container
+      docker_container:
+        name: helloworld
+        image: hello-world
+        auto_remove: true

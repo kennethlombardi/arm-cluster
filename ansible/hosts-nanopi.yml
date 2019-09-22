@@ -1,2 +1,13 @@
+# Example of setting a group of hosts to use Python3
+[py3hosts]
 nanopineo-1.tribal.net
 nanopineo-2.tribal.net
+nanopineo-3.tribal.net
+nanopineo-4.tribal.net
+nanopineo-5.tribal.net
+nanopineo-6.tribal.net
+nanopineo-7.tribal.net
+nanopineo-8.tribal.net
+
+[py3hosts:vars]
+ansible_python_interpreter=/usr/bin/python3

@@ -84,6 +84,40 @@ docker run --rm hello-world
  Note on adding user to the docker group
 > Adding a user to the “docker” group grants them the ability to run containers which can be used to obtain root privileges on the Docker host. Refer to [Docker Daemon Attack Surface](https://docs.docker.com/engine/security/security/#docker-daemon-attack-surface) for more information.
 
+# Python
+The current images for nanopi (Armbian_5.90_Nanopineo_Ubuntu_bionic_next_4.19.57 and Armbian_5.90_Nanopineo2_Ubuntu_bionic_next_4.19.57) both mess up pip3 where you end up with
+```
+> pip3
+Traceback (most recent call last):
+  File "/usr/bin/pip3", line 9, in <module>
+    from pip import main
+ImportError: cannot import name 'main'
+```
+Fixes: https://stackoverflow.com/questions/49836676/error-after-upgrading-pip-cannot-import-name-main
+
+For ansible you end up solving it like:
+```
+  tasks:
+    - name: Python3 uninstall pip
+      command: python3 -m pip uninstall pip
+    - name: Remove "python3-pip" package for reinstall
+      apt:
+        name: python3-pip
+        state: absent
+    - name: install dependencies
+      remote_user: tribal
+      apt:
+        pkg:
+          - docker.io
+          - zsh
+          - python-setuptools
+          - virtualenv
+          - python3-pip
+          - python3-venv
+        update_cache: yes
+        force_apt_get: yes
+```
+
 # Commands
 
 ```bash

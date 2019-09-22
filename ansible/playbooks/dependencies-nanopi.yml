@@ -1,0 +1,23 @@
+---
+- hosts: all
+  remote_user: tribal
+  become: yes
+  tasks:
+    - name: Python3 uninstall pip
+      command: python3 -m pip uninstall pip
+    - name: Remove "python3-pip" package for reinstall
+      apt:
+        name: python3-pip
+        state: absent
+    - name: install dependencies
+      remote_user: tribal
+      apt:
+        pkg:
+          - docker.io
+          - zsh
+          - python-setuptools
+          - virtualenv
+          - python3-pip
+          - python3-venv
+        update_cache: yes
+        force_apt_get: yes

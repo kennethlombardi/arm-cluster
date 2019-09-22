@@ -1,0 +1,22 @@
+---
+- hosts: all
+  remote_user: tribal
+  become: yes
+  tasks:
+    - name: install dependencies
+      remote_user: tribal
+      apt:
+        pkg:
+          - docker.io
+          - zsh
+        update_cache: yes
+        force_apt_get: yes
+    - name: Add the tribal user to the docker group
+      user:
+        name: tribal
+        groups: docker
+        append: yes
+    - name: Create a data container
+      docker_container:
+        name: helloworld
+        image: hello-world
