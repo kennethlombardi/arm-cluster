@@ -16,7 +16,3 @@
         name: tribal
         groups: docker
         append: yes
-    - name: Create a data container
-      docker_container:
-        name: helloworld
-        image: hello-world

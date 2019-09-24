@@ -2,7 +2,20 @@
 
 There's nothing worse than managing a single machine over any period of time
 
+## Docker
+docker_swarm: https://docs.ansible.com/ansible/latest/modules/docker_swarm_module.html
+docker_node: https://docs.ansible.com/ansible/latest/modules/docker_node_module.html
+docker_swarm_info: https://docs.ansible.com/ansible/latest/modules/docker_swarm_info_module.html
+
+## Registering variables and module return values
+https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#accessing-complex-variable-data
+
+https://docs.ansible.com/ansible/latest/reference_appendices/common_return_values.html
+
+
 Cheat sheet: https://www.digitalocean.com/community/tutorials/how-to-use-ansible-cheat-sheet-guide
+
+Example playbooks by do-community (docker): https://github.com/do-community/ansible-playbooks
 
 https://docs.conda.io/projects/conda/en/latest/user-guide/overview.html
 

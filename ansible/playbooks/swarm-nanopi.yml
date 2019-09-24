@@ -1,0 +1,95 @@
+---
+- hosts: dockermanagerfirst
+  remote_user: tribal
+  tasks:
+    - name: Get info on Docker Swarm
+      docker_swarm_info:
+      ignore_errors: yes
+      register: result
+    - name: Inform about basic flags
+      debug:
+        msg: |
+          Was able to talk to docker daemon: {{ result.can_talk_to_docker }}
+          Docker in Swarm mode: {{ result.docker_swarm_active }}
+          This is a Manager node: {{ result.docker_swarm_manager }}
+          Manager token: {{ result.swarm_facts.JoinTokens.Manager }}
+
+- hosts: dockermanagers
+  remote_user: tribal
+  tasks:
+    - name: determine swarm status
+      shell: >
+        docker info --format \{\{.Swarm.LocalNodeState\}\}
+      register: swarm_status
+
+    - name: create swarm_manager_operational group
+      add_host:
+        hostname: "{{ item }}"
+        groups: swarm_manager_operational
+      with_items: "{{ ansible_play_hosts | default(play_hosts) }}"
+      when: "'active' in hostvars[item].swarm_status.stdout_lines"
+      run_once: true
+
+    - name: create swarm_manager_bootstrap group
+      add_host:
+        hostname: "{{ item }}"
+        groups: swarm_manager_bootstrap
+      with_items: "{{ ansible_play_hosts | default(play_hosts) }}"
+      when: "'active' not in hostvars[item].swarm_status.stdout_lines"
+      run_once: true
+
+# determine the status of each worker node and break them
+# into two groups:
+#   - swarm_worker_operational (host is joined to the swarm cluster)
+#   - swarm_worker_bootstrap (host needs to be joined to the cluster)
+- hosts: dockerworkers
+  remote_user: tribal
+  tasks:
+    - name: determine swarm status
+      shell: >
+        docker info --format \{\{.Swarm.LocalNodeState\}\}
+      register: swarm_status
+
+    - name: create swarm_worker_operational group
+      add_host:
+        hostname: "{{ item }}"
+        groups: swarm_worker_operational
+      with_items: "{{ ansible_play_hosts | default(play_hosts) }}"
+      when: "'active' in hostvars[item].swarm_status.stdout_lines"
+      run_once: true
+
+    - name: create swarm_worker_bootstrap group
+      add_host:
+        hostname: "{{ item }}"
+        groups: swarm_worker_bootstrap
+      with_items: "{{ ansible_play_hosts | default(play_hosts) }}"
+      when: "'active' not in hostvars[item].swarm_status.stdout_lines"
+      run_once: true
+# We stopped here trying stuff
+
+# This tutorial uses roles. Could be useful
+# https://blog.ruanbekker.com/blog/2018/06/14/deploy-docker-swarm-using-ansible/
+
+# This tutorial does some crazy stuff that didn't work but gave ideas
+# https://caylent.com/manage-docker-swarm-using-ansible
+# https://github.com/caylent/ansible-docker-swarm
+
+# - hosts: dockermanagers
+#   remote_user: tribal
+#   tasks:
+#     - debug:
+#         var: hostvars['nanopineo-1']['result']
+
+#     - name: Add Managers to the Swarm
+#       shell: "docker swarm join --token {{ hostvars['nanopineo-1.tribal.net']['result']['swarm_facts']['JoinTokens']['Manager'] }} {{ hostvars['nanopineo-1']['ansible_default_ipv4']['address'] }}:2377"
+#       when: result.rc != 0
+#       # tags: swarm
+# #     - name: Join the cluster
+# #       docker_swarm:
+# #         state: join
+# #         # advertise_addr: 192.168.1.2
+# #         advertise_addr: "{{ ansible_default_ipv4.address }}"
+# #         join_token: "{{  info.swarm_facts.JoinTokens.Manager }}"
+# #         # remote_addrs: [ '192.168.1.1:2377' ]
+# #         remote_addrs: [ "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"]
+# #         # hostvars[inventory_hostname]['ansible_default_ipv4']['address']
