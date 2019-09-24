@@ -1,0 +1,11 @@
+---
+- hosts: rock64-2.tribal.net
+  user: rock64
+  vars:
+     - devops_password: 'abcddefsfdfdfdfdfdfdfdfdfdfd'
+     - ansible_password: rock64
+
+  sudo: yes
+  tasks:
+    - name: test connection
+      ping:

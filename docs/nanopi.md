@@ -58,13 +58,17 @@ In order to add this node to a swarm it will need to have docker installed.
 Test the version of docker using `docker info`. The response should be
 ```
 Command 'docker' not found, but can be installed with:
-
-sudo apt install docker.io
 ```
 
 ```bash
 # install docker
+sudo apt update # update first
+
 sudo apt install docker.io -y
+
+# perform docker post install steps
+https://docs.docker.com/install/linux/linux-postinstall/
+Be aware: `https://docs.docker.com/engine/security/security/#docker-daemon-attack-surface`
 
 # add user to docker group so sudo isn't necessary
 sudo usermod -aG docker your-user
@@ -80,6 +84,40 @@ docker run --rm hello-world
  Note on adding user to the docker group
 > Adding a user to the “docker” group grants them the ability to run containers which can be used to obtain root privileges on the Docker host. Refer to [Docker Daemon Attack Surface](https://docs.docker.com/engine/security/security/#docker-daemon-attack-surface) for more information.
 
+# Python
+The current images for nanopi (Armbian_5.90_Nanopineo_Ubuntu_bionic_next_4.19.57 and Armbian_5.90_Nanopineo2_Ubuntu_bionic_next_4.19.57) both mess up pip3 where you end up with
+```
+> pip3
+Traceback (most recent call last):
+  File "/usr/bin/pip3", line 9, in <module>
+    from pip import main
+ImportError: cannot import name 'main'
+```
+Fixes: https://stackoverflow.com/questions/49836676/error-after-upgrading-pip-cannot-import-name-main
+
+For ansible you end up solving it like:
+```
+  tasks:
+    - name: Python3 uninstall pip
+      command: python3 -m pip uninstall pip
+    - name: Remove "python3-pip" package for reinstall
+      apt:
+        name: python3-pip
+        state: absent
+    - name: install dependencies
+      remote_user: tribal
+      apt:
+        pkg:
+          - docker.io
+          - zsh
+          - python-setuptools
+          - virtualenv
+          - python3-pip
+          - python3-venv
+        update_cache: yes
+        force_apt_get: yes
+```
+
 # Commands
 
 ```bash
@@ -88,4 +126,17 @@ lsb_release -a
 
 #
 ```
+
+If you re flash the devices and your old keys stick around there may be need to reissue the private/public key pairs
+
+You may also need to update your ssh config file to only use identities defined in the config and not try every key against your servers. Be specific.
+
+https://www.tecmint.com/fix-ssh-too-many-authentication-failures-error/
+
+Remove offensive entry from known_hosts
+ssh-keygen -R nanopineo-1.tribal.net
+
+Log in and bypass existing keys
+ssh -o PubkeyAuthentication=no -vvv root@nanopineo-1.tribal.net
+
 

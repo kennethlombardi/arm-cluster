@@ -1,0 +1,21 @@
+---
+- hosts: all
+  remote_user: tribal
+  tasks:
+    - name: Copy file with owner and permissions
+      copy:
+        src: requirements.txt
+        dest: requirements.txt
+        owner: tribal
+        group: tribal
+        mode: '0644'
+    # - name: Manually create the initial virtualenv
+      # command: virtualenv ansible-venv-3 python3 creates="ansible-venv-3"
+      # command: python3 -m venv ansible-venv-3
+    # - name: Install requirements
+    #   pip:
+    #     requirements: /home/tribal/requirements.txt
+    #     virtualenv: ansible-venv-3
+    - name: Install requirements
+      pip:
+        name: docker
