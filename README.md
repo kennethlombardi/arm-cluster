@@ -126,3 +126,6 @@ https://stackoverflow.com/questions/24392657/adding-an-rsa-key-without-overwriti
 
 # Remote commands against docker daemon
 https://raesene.github.io/blog/2018/11/11/Docker-18-09-SSH/
+
+# Random
+https://lunar.computer/posts/docker-swarm-digitalocean/
