@@ -87,6 +87,7 @@ See https://docs.docker.com/engine/swarm/join-nodes/ and https://docs.docker.com
 
 > Manager numbers note: A quorum majority is `(#nodes / 2) + 1`.
 > Manager numbers note: Fault tolerance is  `(#nodes - 1) / 2`.
+> Another way to view fault tolerance is as fault tolerance = M = 2F + 1 where M nodes are required to tolerate F faults
 
 > 1 node: `(1/2) + 1 = 1` meaning 1 node needs one node to have a majority. Fault tolerance is 0 meaning you lose one node and your cluster is down (majority lost when `1 - 1 = 0` and required consensus majority requires `1`)
 
